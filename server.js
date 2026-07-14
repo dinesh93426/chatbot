@@ -6,8 +6,8 @@ import { fileURLToPath } from "url";
 import { MockCustomers, getCustomerInfoByEmail, getOrderById, cancelCustomerSubscription } from "./knowledge.js";
 import { getOpenRouterResponse, getMockResponse } from "./openrouter.js";
 
-// Initialize environment variables
-dotenv.config();
+// Initialize environment variables, forcing local .env overrides
+dotenv.config({ override: true });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
