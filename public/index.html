@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora Customer Support Center</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Animated Background Gradients -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Main Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <span class="brand-accent">N E X O R A</span>
+          <span class="brand-sub">SUPPORT CENTER</span>
+        </div>
+      </div>
+
+      <!-- Simulator Controls -->
+      <div class="sidebar-section">
+        <h3 class="section-title"><i data-lucide="users"></i> Customer Simulator</h3>
+        <p class="section-desc">Select a profile to simulate customer details & test identity verification.</p>
+        
+        <div class="select-wrapper">
+          <select id="profile-select" class="premium-select">
+            <option value="anonymous">Anonymous Visitor</option>
+            <option value="sarah@example.com">Sarah Jenkins (Has Active Sub & Order)</option>
+            <option value="marcus@example.com">Marcus Vance (Order In Transit)</option>
+            <option value="elena@example.com">Elena Rostova (Has Open Return Ticket)</option>
+          </select>
+        </div>
+
+        <!-- Simulated Database Card -->
+        <div id="customer-card" class="customer-card glass-panel empty">
+          <p class="empty-text">No verified customer profile selected.</p>
+        </div>
+      </div>
+
+      <!-- Quick Test Queries -->
+      <div class="sidebar-section">
+        <h3 class="section-title"><i data-lucide="help-circle"></i> Quick Test Prompts</h3>
+        <p class="section-desc">Click any prompt below to automatically paste it into the chat input.</p>
+        <div class="quick-prompts">
+          <button class="prompt-chip" data-text="Where is my order #1002?">Track Order #1002</button>
+          <button class="prompt-chip" data-text="What is your return policy?">Return & Refund Policy</button>
+          <button class="prompt-chip" data-text="I'd like to cancel my Nexora Shield subscription.">Cancel Subscription</button>
+          <button class="prompt-chip" data-text="Can you check on return ticket TK-402?">Check Return Ticket</button>
+          <button class="prompt-chip" data-text="I want to speak to a real person right now.">Escalate to Human</button>
+        </div>
+      </div>
+
+      <!-- Nexora Information Panel -->
+      <div class="sidebar-section info-section">
+        <h3 class="section-title"><i data-lucide="book-open"></i> Knowledge Base</h3>
+        <div class="knowledge-tabs">
+          <div class="kb-item">
+            <span class="kb-label">Nexora Link:</span>
+            <span class="kb-val">$149 (Smart Home Hub)</span>
+          </div>
+          <div class="kb-item">
+            <span class="kb-label">Nexora Cam:</span>
+            <span class="kb-val">$79 (Indoor Camera)</span>
+          </div>
+          <div class="kb-item">
+            <span class="kb-label">Nexora Cam Pro:</span>
+            <span class="kb-val">$129 (Outdoor IP65 Camera)</span>
+          </div>
+          <div class="kb-item">
+            <span class="kb-label">Warranty:</span>
+            <span class="kb-val">1-Year Limited Hardware</span>
+          </div>
+          <div class="kb-item">
+            <span class="kb-label">Shield Subscription:</span>
+            <span class="kb-val">Basic ($4.99/mo) | Plus ($9.99/mo)</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window Area -->
+    <main class="chat-area">
+      <header class="chat-header glass-panel">
+        <div class="agent-info">
+          <div class="agent-avatar">
+            <div class="avatar-ring animate-pulse"></div>
+            <i data-lucide="bot" class="bot-icon"></i>
+            <i data-lucide="user" class="human-icon hidden"></i>
+          </div>
+          <div class="agent-details">
+            <div class="agent-title">
+              <h2 id="agent-name">Nexora Support Agent</h2>
+              <span id="agent-badge" class="badge badge-ai">AI Bot</span>
+            </div>
+            <p id="agent-status" class="agent-status"><span class="status-dot"></span> Ready to assist you</p>
+          </div>
+        </div>
+
+        <!-- Mode Indicator and Settings Toggle -->
+        <div class="header-controls">
+          <div class="mode-badge glass-panel">
+            <span id="mode-text">Demo Mode (Offline)</span>
+          </div>
+          <button id="settings-btn" class="icon-btn" title="Settings"><i data-lucide="settings"></i></button>
+        </div>
+      </header>
+
+      <!-- Chat Feed -->
+      <section class="chat-feed" id="chat-feed">
+        <!-- Welcoming Message -->
+        <div class="message message-bot">
+          <div class="message-bubble glass-panel">
+            <p>Welcome to Nexora Customer Support. I'm your virtual assistant, here to help you resolve issues, track orders, or answer questions about your hardware.</p>
+            <p>To help me look up account-specific info, please verify your email or order number if you have it.</p>
+          </div>
+          <span class="message-time">Just now</span>
+        </div>
+      </section>
+
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="typing-indicator hidden">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+
+      <!-- Escalation Alert Banner -->
+      <div id="escalation-banner" class="escalation-banner hidden">
+        <div class="banner-content">
+          <i data-lucide="user-check" class="banner-icon"></i>
+          <div>
+            <h4>Human Agent Connected</h4>
+            <p>An customer care representative has joined the chat. They have reviewed your conversation history.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Suggestions Bar -->
+      <div class="chat-suggestions" id="chat-suggestions">
+        <button class="suggestion-chip">Track Order</button>
+        <button class="suggestion-chip">Returns Info</button>
+        <button class="suggestion-chip">Cancel Subscription</button>
+        <button class="suggestion-chip">Talk to Agent</button>
+      </div>
+
+      <!-- Chat Input Area -->
+      <footer class="chat-input-area glass-panel">
+        <form id="chat-form" class="chat-form">
+          <textarea id="chat-input" placeholder="Ask about order tracking, cancellations, returns..." rows="1" required></textarea>
+          <div class="input-actions">
+            <button type="button" id="clear-chat-btn" class="icon-btn" title="Clear Conversation"><i data-lucide="trash-2"></i></button>
+            <button type="submit" id="send-btn" class="send-btn"><i data-lucide="send"></i> Send</button>
+          </div>
+        </form>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Settings Modal (Glassmorphism overlay) -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-card glass-panel animate-zoom">
+      <div class="modal-header">
+        <h3><i data-lucide="settings"></i> System Settings</h3>
+        <button id="close-settings-btn" class="icon-btn"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-group">
+          <label class="setting-label">AI Engine Mode</label>
+          <div class="toggle-buttons">
+            <button id="btn-use-mock" class="toggle-btn active">Demo (Offline Simulation)</button>
+            <button id="btn-use-gemini" class="toggle-btn">Live Gemini API</button>
+          </div>
+          <p class="setting-hint">Demo Mode uses a simulated local response engine according to Nexora's support guidelines. Live mode connects to Google Gemini.</p>
+        </div>
+
+        <div id="gemini-key-group" class="setting-group hidden">
+          <label class="setting-label" for="api-key-input">Gemini API Key</label>
+          <input type="password" id="api-key-input" class="premium-input" placeholder="Enter your GEMINI_API_KEY...">
+          <p class="setting-hint">Your API key is stored locally in your browser session for direct API calls. You can also specify it in the server `.env` file.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="save-settings-btn" class="save-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lucide Icons Init -->
+  <script>
+    lucide.createIcons();
+  </script>
+  <!-- Main Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
