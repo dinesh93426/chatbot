@@ -62,6 +62,13 @@ app.get("/api/orders/:id", (req, res) => {
   }
 });
 
+// Endpoint to check server configuration
+app.get("/api/config", (req, res) => {
+  res.json({
+    hasApiKey: !!process.env.OPENROUTER_API_KEY
+  });
+});
+
 // Chat endpoint integrating OpenRouter API and local mock fallback
 app.post("/api/chat", async (req, res) => {
   try {

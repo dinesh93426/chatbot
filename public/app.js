@@ -29,6 +29,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let useMock = true; // Default to demo simulation
   let isHumanMode = false;
   let userApiKey = sessionStorage.getItem("OPENROUTER_API_KEY") || "";
+  let serverHasApiKey = false;
+
+  async function checkServerConfig() {
+    try {
+      const response = await fetch("/api/config");
+      const data = await response.json();
+      serverHasApiKey = data.hasApiKey;
+      updateKeyInputVisibility();
+    } catch (err) {
+      console.error("Error checking server config:", err);
+    }
+  }
+
+  checkServerConfig();
 
   // Set default API key input if stored in session
   if (userApiKey) {
@@ -215,18 +229,49 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  function updateKeyInputVisibility() {
+    if (useMock) {
+      geminiKeyGroup.classList.add("hidden");
+    } else {
+      geminiKeyGroup.classList.remove("hidden");
+      const labelEl = document.querySelector("#gemini-key-group .setting-label");
+      const hintEl = document.querySelector("#gemini-key-group .setting-hint");
+      
+      if (serverHasApiKey) {
+        apiKeyInput.classList.add("hidden");
+        if (labelEl) labelEl.classList.add("hidden");
+        if (hintEl) {
+          hintEl.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success); padding: 12px; border-radius: 8px; color: var(--success); display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 0.8rem;">
+              <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i>
+              API Key is configured on the server. Ready for live chat.
+            </div>
+          `;
+        }
+      } else {
+        apiKeyInput.classList.remove("hidden");
+        if (labelEl) labelEl.classList.remove("hidden");
+        if (hintEl) {
+          hintEl.textContent = "Your API key is stored locally in your browser session for direct API calls. You can also specify it in the server .env file.";
+        }
+      }
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+  }
+
   // State / UI Toggles
   function toggleEngineButtons(selectMock) {
     useMock = selectMock;
     if (selectMock) {
       btnUseMock.classList.add("active");
       btnUseGemini.classList.remove("active");
-      geminiKeyGroup.classList.add("hidden");
     } else {
       btnUseMock.classList.remove("active");
       btnUseGemini.classList.add("active");
-      geminiKeyGroup.classList.remove("hidden");
     }
+    updateKeyInputVisibility();
     updateModeIndicator();
   }
 
