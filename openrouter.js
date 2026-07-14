@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NexoraKnowledge, getCustomerInfoByEmail, getOrderById } from "./knowledge.js";
 
 // System Prompt for Nexora Support Agent
@@ -65,7 +64,10 @@ When escalating: explain *why* briefly, tell them what happens next, and don't m
 // Simple mock responses for Demo Mode (if no API Key is available or Demo Mode is toggled)
 export function getMockResponse(message, history, currentCustomer) {
   const msg = message.toLowerCase();
-  const historyText = history.map(h => h.parts[0].text.toLowerCase()).join(" ");
+  const historyText = history.map(h => {
+    const textPart = h.parts ? h.parts[0].text : (h.content || "");
+    return textPart.toLowerCase();
+  }).join(" ");
 
   // 1. Check for explicit escalation triggers
   if (msg.includes("human") || msg.includes("representative") || msg.includes("agent") || msg.includes("person") || msg.includes("manager") || msg.includes("supervisor")) {
@@ -205,16 +207,11 @@ export function getMockResponse(message, history, currentCustomer) {
   };
 }
 
-// Call Gemini API
-export async function getGeminiResponse(message, history, currentCustomer, apiKey) {
+// Call OpenRouter completions API using native Node fetch
+export async function getOpenRouterResponse(message, history, currentCustomer, apiKey, modelName = "deepseek/deepseek-chat") {
   if (!apiKey) {
-    throw new Error("Gemini API key is not configured.");
+    throw new Error("OpenRouter API key is not configured.");
   }
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-  });
 
   // Prepare system context injection
   let sessionContext = "\n## CURRENT SESSION CONTEXT\n";
@@ -243,28 +240,52 @@ export async function getGeminiResponse(message, history, currentCustomer, apiKe
 
   sessionContext += `\n## OFFICIAL NEXORA KNOWLEDGE BASE:\n${JSON.stringify(NexoraKnowledge, null, 2)}\n`;
 
-  // Merge the standard system prompt and dynamic context
-  const fullSystemInstruction = SYSTEM_PROMPT + sessionContext;
+  // Merge systemic rules and dynamic states
+  const systemInstruction = SYSTEM_PROMPT + sessionContext;
 
-  // Format history for Gemini SDK:
-  // [{ role: 'user', parts: [{ text: '...' }] }, { role: 'model', parts: [{ text: '...' }] }]
-  const formattedHistory = history.map(item => ({
-    role: item.role === "assistant" ? "model" : "user",
-    parts: [{ text: item.parts[0].text }]
-  }));
+  // Format messages array for standard chat completions API
+  const messages = [
+    { role: "system", content: systemInstruction }
+  ];
 
-  // Initial chat setup
-  const chat = model.startChat({
-    history: formattedHistory,
-    systemInstruction: fullSystemInstruction,
-    generationConfig: {
-      temperature: 0.4,
-      maxOutputTokens: 500,
-    }
+  // Append history
+  history.forEach(item => {
+    const content = item.content || (item.parts ? item.parts[0].text : "");
+    messages.push({
+      role: item.role === "assistant" ? "assistant" : "user",
+      content: content
+    });
   });
 
-  const result = await chat.sendMessage(message);
-  const responseText = result.response.text();
+  // Append current user message
+  messages.push({ role: "user", content: message });
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "http://localhost:3000",
+      "X-Title": "Nexora Support Agent"
+    },
+    body: JSON.stringify({
+      model: modelName,
+      messages: messages,
+      temperature: 0.4
+    })
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`OpenRouter API error (${response.status}): ${errText}`);
+  }
+
+  const data = await response.json();
+  if (!data.choices || data.choices.length === 0) {
+    throw new Error("No responses received from OpenRouter API.");
+  }
+  
+  const responseText = data.choices[0].message.content;
 
   // Programmatic Escalation Check
   const lowerResponse = responseText.toLowerCase();

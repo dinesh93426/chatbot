@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentCustomer = null;
   let useMock = true; // Default to demo simulation
   let isHumanMode = false;
-  let userApiKey = sessionStorage.getItem("GEMINI_API_KEY") || "";
+  let userApiKey = sessionStorage.getItem("OPENROUTER_API_KEY") || "";
 
   // Set default API key input if stored in session
   if (userApiKey) {
@@ -86,9 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
   saveSettingsBtn.addEventListener("click", () => {
     userApiKey = apiKeyInput.value.trim();
     if (userApiKey) {
-      sessionStorage.setItem("GEMINI_API_KEY", userApiKey);
+      sessionStorage.setItem("OPENROUTER_API_KEY", userApiKey);
     } else {
-      sessionStorage.removeItem("GEMINI_API_KEY");
+      sessionStorage.removeItem("OPENROUTER_API_KEY");
       if (!useMock) {
         // Fallback to mock if live selected but no key given
         toggleEngineButtons(true);
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modeText.textContent = "Demo Mode (Offline)";
       modeText.style.color = "var(--accent-amber)";
     } else {
-      modeText.textContent = "Live Gemini Mode";
+      modeText.textContent = "Live OpenRouter Mode";
       modeText.style.color = "var(--success)";
     }
   }

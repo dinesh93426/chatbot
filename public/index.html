@@ -179,14 +179,14 @@
           <label class="setting-label">AI Engine Mode</label>
           <div class="toggle-buttons">
             <button id="btn-use-mock" class="toggle-btn active">Demo (Offline Simulation)</button>
-            <button id="btn-use-gemini" class="toggle-btn">Live Gemini API</button>
+            <button id="btn-use-gemini" class="toggle-btn">Live OpenRouter API</button>
           </div>
-          <p class="setting-hint">Demo Mode uses a simulated local response engine according to Nexora's support guidelines. Live mode connects to Google Gemini.</p>
+          <p class="setting-hint">Demo Mode uses a simulated local response engine according to Nexora's support guidelines. Live mode connects to OpenRouter and DeepSeek.</p>
         </div>
 
         <div id="gemini-key-group" class="setting-group hidden">
-          <label class="setting-label" for="api-key-input">Gemini API Key</label>
-          <input type="password" id="api-key-input" class="premium-input" placeholder="Enter your GEMINI_API_KEY...">
+          <label class="setting-label" for="api-key-input">OpenRouter API Key</label>
+          <input type="password" id="api-key-input" class="premium-input" placeholder="Enter your OPENROUTER_API_KEY...">
           <p class="setting-hint">Your API key is stored locally in your browser session for direct API calls. You can also specify it in the server `.env` file.</p>
         </div>
       </div>

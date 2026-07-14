@@ -4,7 +4,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { MockCustomers, getCustomerInfoByEmail, getOrderById, cancelCustomerSubscription } from "./knowledge.js";
-import { getGeminiResponse, getMockResponse } from "./gemini.js";
+import { getOpenRouterResponse, getMockResponse } from "./openrouter.js";
 
 // Initialize environment variables
 dotenv.config();
@@ -62,19 +62,19 @@ app.get("/api/orders/:id", (req, res) => {
   }
 });
 
-// Chat endpoint integrating Gemini API and local mock fallback
+// Chat endpoint integrating OpenRouter API and local mock fallback
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, history, currentCustomer, useMock } = req.body;
+    const { message, history, currentCustomer, useMock, apiKey: clientApiKey } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY || clientApiKey;
     const forceMock = useMock || !apiKey;
 
-    console.log(`Processing chat message. Mode: ${forceMock ? "Mock/Demo" : "Live Gemini"}`);
+    console.log(`Processing chat message. Mode: ${forceMock ? "Mock/Demo" : "Live OpenRouter"}`);
 
     if (forceMock) {
       // Use local simulation engine
@@ -90,12 +90,13 @@ app.post("/api/chat", async (req, res) => {
         mode: "mock"
       });
     } else {
-      // Call Gemini Generative AI SDK
-      const response = await getGeminiResponse(message, history, currentCustomer, apiKey);
+      // Call OpenRouter completions API with DeepSeek model
+      const model = process.env.OPENROUTER_MODEL || "deepseek/deepseek-chat";
+      const response = await getOpenRouterResponse(message, history, currentCustomer, apiKey, model);
       return res.json({
         text: response.text,
         shouldEscalate: response.shouldEscalate || false,
-        mode: "gemini"
+        mode: "openrouter"
       });
     }
   } catch (error) {
@@ -103,6 +104,7 @@ app.post("/api/chat", async (req, res) => {
     res.status(500).json({ error: error.message, isError: true });
   }
 });
+
 
 // API endpoint to cancel customer subscription
 app.post("/api/cancel-subscription", (req, res) => {
