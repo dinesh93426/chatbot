@@ -150,6 +150,7 @@ body.human-mode .bg-glow-1 {
   letter-spacing: 4px;
   background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 30px var(--primary-glow);
 }
